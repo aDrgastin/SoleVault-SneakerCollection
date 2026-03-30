@@ -1,6 +1,6 @@
 package hr.tvz.solevault.solevaultapp.service;
 
-import hr.tvz.solevault.solevaultapp.model.Sneaker;
+import hr.tvz.solevault.solevaultapp.model.SneakerCommand;
 import hr.tvz.solevault.solevaultapp.model.SneakerDTO;
 
 import java.util.List;
@@ -13,7 +13,11 @@ public interface SneakerService {
 
     Optional<SneakerDTO> findByModel(String val);
 
-    SneakerDTO addSneaker(SneakerDTO sneaker);
+    List<SneakerDTO> findByColorway(String colorway);
 
-    void deleteSneaker(Long id);
+    Optional<SneakerDTO> addSneaker(SneakerCommand sneakerCommand);
+
+    boolean deleteSneaker(String model);
+
+    boolean deleteSneaker(Long id);
 }

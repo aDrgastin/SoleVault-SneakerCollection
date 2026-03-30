@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 @Getter
 public class SneakerDTO {
     private String model;
-    private Brand brand;
-    private Integer size;
+    private BrandDTO brand;
+    private BigDecimal size;
     private String colorway;
     private BigDecimal buyPrice;
     private BigDecimal currentValue;

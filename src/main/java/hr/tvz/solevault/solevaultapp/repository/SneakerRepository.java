@@ -1,7 +1,6 @@
 package hr.tvz.solevault.solevaultapp.repository;
 
 import hr.tvz.solevault.solevaultapp.model.Sneaker;
-import hr.tvz.solevault.solevaultapp.model.SneakerDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,11 @@ public interface SneakerRepository {
 
     Optional<Sneaker> findByModel(String val);
 
-    Sneaker addSneaker(SneakerDTO sneaker);
+    List<Sneaker> findByColorway(String colorway);
 
-    void deleteSneaker(Long id);
+    Optional<Sneaker> addSneaker(Sneaker sneaker);
+
+    boolean deleteSneaker(String model);
+
+    boolean deleteSneaker(Long id);
 }
