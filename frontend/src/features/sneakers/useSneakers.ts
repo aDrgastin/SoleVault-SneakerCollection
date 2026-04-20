@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
-import { mockSneakers } from "./mockSneakerData";
 import type Sneaker from "./Sneaker";
+import { getAllSneakers } from "./sneakerApi";
 
 export default function useSneakers() {
     const [data, setData] = useState<Sneaker[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
+    const fetchSneakers = async () => {
         setLoading(true);
         setError(null);
-        setTimeout(() => {
-            setData(mockSneakers);
+        try {
+            const sneakers = await getAllSneakers();
+            setData(sneakers);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
             setLoading(false);
-        }, 600)
-    }, []);
+        }
+    };
+    useEffect(() => { fetchSneakers(); }, []);
 
-    return { data, loading, error };
+    return { data, setData, loading, error, refetch: fetchSneakers };
 }

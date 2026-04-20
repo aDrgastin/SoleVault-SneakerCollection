@@ -11,6 +11,9 @@ public class SneakerCommand {
     @Size(max = 50, message = "Model može imati najviše {max} znakova")
     private String model;
 
+    @NotNull(message = "Brand je obavezan")
+    private Long brandId;
+
     @NotNull(message = "Veličina je obavezna")
     @PositiveOrZero(message = "Veličina mora biti veća ili jednaka od 0")
     @DecimalMin(value = "35.0", message = "Veličina mora biti veća od {value}")

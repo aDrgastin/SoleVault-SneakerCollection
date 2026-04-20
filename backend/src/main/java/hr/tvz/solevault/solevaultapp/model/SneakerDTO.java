@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 public class SneakerDTO {
+    private Long id;
     private String model;
     private BrandDTO brand;
     private BigDecimal size;
@@ -15,4 +16,5 @@ public class SneakerDTO {
     private BigDecimal buyPrice;
     private BigDecimal currentValue;
     private BigDecimal profitLoss;
+    private String condition;
 }

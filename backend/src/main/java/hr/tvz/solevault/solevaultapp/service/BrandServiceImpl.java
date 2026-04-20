@@ -33,6 +33,6 @@ public class BrandServiceImpl implements BrandService {
     }
 
     private BrandDTO toDto(Brand brand) {
-        return new BrandDTO(brand.getName(), brand.getCountry(), brand.getFounded(), brand.getLogoUrl());
+        return new BrandDTO(brand.getId(), brand.getName(), brand.getCountry(), brand.getFounded(), brand.getLogoUrl());
     }
 }

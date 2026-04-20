@@ -15,6 +15,8 @@ public interface SneakerService {
 
     List<SneakerDTO> findByColorway(String colorway);
 
+    Optional<SneakerDTO> updateSneaker(Long id, SneakerCommand sneakerCommand);
+
     Optional<SneakerDTO> addSneaker(SneakerCommand sneakerCommand);
 
     boolean deleteSneaker(String model);

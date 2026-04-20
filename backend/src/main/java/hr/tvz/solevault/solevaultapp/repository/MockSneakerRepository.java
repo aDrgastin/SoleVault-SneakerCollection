@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 @Repository
 public class MockSneakerRepository implements SneakerRepository {
-    private Sneaker sneaker1 = new Sneaker(1l, "Air Force", 1l, BigDecimal.valueOf(44), "white/green", BigDecimal.valueOf(77), BigDecimal.valueOf(66), "used", LocalDate.now());
-    private Sneaker sneaker2 = new Sneaker(2l, "Yeezy", 2l, BigDecimal.valueOf(41), "black/white", BigDecimal.valueOf(120), BigDecimal.valueOf(105), "used", LocalDate.now());
-    private Sneaker sneaker3 = new Sneaker(3l, "Air Max", 1l, BigDecimal.valueOf(37), "black/white", BigDecimal.valueOf(134), BigDecimal.valueOf(134), "new", LocalDate.now());
-    List<Sneaker> sneakers = List.of(sneaker1, sneaker2, sneaker3);
+    private Sneaker sneaker1 = new Sneaker(1l, "Air Force", 1l, BigDecimal.valueOf(44), "white/green", BigDecimal.valueOf(77), BigDecimal.valueOf(66), "USED", LocalDate.now());
+    private Sneaker sneaker2 = new Sneaker(2l, "Yeezy", 2l, BigDecimal.valueOf(41), "black/white", BigDecimal.valueOf(120), BigDecimal.valueOf(105), "USED", LocalDate.now());
+    private Sneaker sneaker3 = new Sneaker(3l, "Air Max", 1l, BigDecimal.valueOf(37), "black/white", BigDecimal.valueOf(134), BigDecimal.valueOf(134), "NEW", LocalDate.now());
+    List<Sneaker> sneakers = new ArrayList<>(List.of(sneaker1, sneaker2, sneaker3));
 
     @Override
     public List<Sneaker> findAll() {
@@ -44,9 +44,19 @@ public class MockSneakerRepository implements SneakerRepository {
         if (sneakers.stream().anyMatch(s -> s.getModel().equals(sneaker.getModel()))) {
             return Optional.empty();
         }
-        Sneaker newSneaker = new Sneaker(sneakers.size() + 1L, sneaker.getModel(), null, sneaker.getSize(), sneaker.getColorway(), sneaker.getBuyPrice(), sneaker.getCurrentValue(), "new", LocalDate.now());
-        sneakers = Stream.concat(sneakers.stream(), Stream.of(newSneaker)).toList();
-        return Optional.of(newSneaker);
+        sneakers.add(sneaker);
+        return Optional.of(sneaker);
+    }
+
+    @Override
+    public Optional<Sneaker> updateSneaker(Sneaker sneaker) {
+        return sneakers.stream()
+                .filter(s -> s.getId().equals(sneaker.getId()))
+                .findFirst()
+                .map(old -> {
+                    sneakers.set(sneakers.indexOf(old), sneaker);
+                    return sneaker;
+                });
     }
 
     @Override
@@ -54,7 +64,7 @@ public class MockSneakerRepository implements SneakerRepository {
         if (!sneakers.stream().filter(sneaker -> sneaker.getModel().equals(model)).findFirst().isPresent()) {
             return false;
         }
-        sneakers = sneakers.stream().filter(sneaker -> !sneaker.getModel().equals(model)).toList();
+        sneakers.removeIf(s -> s.getModel().equals(model));
         return true;
     }
 
@@ -63,7 +73,7 @@ public class MockSneakerRepository implements SneakerRepository {
         if (!sneakers.stream().filter(sneaker -> sneaker.getId().equals(id)).findFirst().isPresent()) {
             return false;
         }
-        sneakers = sneakers.stream().filter(sneaker -> !sneaker.getId().equals(id)).toList();
+        sneakers.removeIf(s -> s.getId().equals(id));
         return true;
     }
 }

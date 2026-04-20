@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/sneakers")
 @AllArgsConstructor
+//@CrossOrigin(origins = "http://localhost:5173")
 public class SneakerController {
     private final SneakerService sneakerService;
 
@@ -54,17 +55,31 @@ public class SneakerController {
                 .orElse(ResponseEntity.status(409).build());
     }
 
-    @DeleteMapping("/{model}")
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateSneaker(@PathVariable Long id, @Valid @RequestBody SneakerCommand sneakerCommand, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = result.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField, FieldError::getDefaultMessage, (existing, duplicate) -> existing + "\n" + duplicate
+                    ));
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return sneakerService.updateSneaker(id, sneakerCommand)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /*@DeleteMapping("/{model}")
     public ResponseEntity<Void> deleteSneakerByModel(@PathVariable String model) {
         if (sneakerService.deleteSneaker(model)) {
             return ResponseEntity.noContent().build();
         } else return ResponseEntity.notFound().build();
-    }
+    }*/
 
-    /*@DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSneaker(@PathVariable Long id) {
         if (sneakerService.deleteSneaker(id)) {
             return ResponseEntity.noContent().build();
         } else return ResponseEntity.notFound().build();
-    }*/
+    }
 }

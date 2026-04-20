@@ -38,9 +38,19 @@ public class SneakerServiceImpl implements SneakerService {
 
     @Override
     public Optional<SneakerDTO> addSneaker(SneakerCommand sneakerCommand) {
-        Sneaker newSneaker = new Sneaker(sneakerRepository.findAll().size() + 1L, sneakerCommand.getModel(), null, sneakerCommand.getSize(), sneakerCommand.getColorway(), sneakerCommand.getBuyPrice(), sneakerCommand.getBuyPrice(), sneakerCommand.getCondition(), LocalDate.now());
+        Sneaker newSneaker = new Sneaker(sneakerRepository.findAll().size() + 1L, sneakerCommand.getModel(), sneakerCommand.getBrandId(), sneakerCommand.getSize(), sneakerCommand.getColorway(), sneakerCommand.getBuyPrice(), sneakerCommand.getBuyPrice(), sneakerCommand.getCondition(), LocalDate.now());
         Optional<Sneaker> created = sneakerRepository.addSneaker(newSneaker);
         return created.map(this::toDTO);
+    }
+
+    @Override
+    public Optional<SneakerDTO> updateSneaker(Long id, SneakerCommand sneakerCommand) {
+        Optional<Sneaker> oldSneaker = sneakerRepository.findById(id);
+        if (oldSneaker.isEmpty()) {
+            return Optional.empty();
+        }
+        Sneaker updated = new Sneaker(id, sneakerCommand.getModel(), sneakerCommand.getBrandId(), sneakerCommand.getSize(), sneakerCommand.getColorway(), sneakerCommand.getBuyPrice(), oldSneaker.get().getCurrentValue(), sneakerCommand.getCondition(), oldSneaker.get().getPurchasedAt());
+        return sneakerRepository.updateSneaker(updated).map(this::toDTO);
     }
 
     @Override
@@ -55,8 +65,8 @@ public class SneakerServiceImpl implements SneakerService {
 
     private SneakerDTO toDTO(Sneaker s) {
         BrandDTO brandDTO = brandRepository.findById(s.getBrand_id())
-                .map(b -> new BrandDTO(b.getName(), b.getCountry(), b.getFounded(), b.getLogoUrl()))
+                .map(b -> new BrandDTO(b.getId(), b.getName(), b.getCountry(), b.getFounded(), b.getLogoUrl()))
                 .orElse(null);
-        return new SneakerDTO(s.getModel(), brandDTO, s.getSize(), s.getColorway(), s.getBuyPrice(), s.getCurrentValue(), s.getCurrentValue().subtract(s.getBuyPrice()));
+        return new SneakerDTO(s.getId(), s.getModel(), brandDTO, s.getSize(), s.getColorway(), s.getBuyPrice(), s.getCurrentValue(), s.getCurrentValue().subtract(s.getBuyPrice()), s.getCondition());
     }
 }
