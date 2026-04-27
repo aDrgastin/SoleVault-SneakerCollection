@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import useSneakers from "./useSneakers";
 import { deleteSneaker } from "./sneakerApi";
 import { useState } from "react";
-import SneakerForm from "./SneakerFormComponent";
+import SneakerForm from "./SneakerForm";
 import type Sneaker from "./Sneaker";
 
 export default function SneakerList() {

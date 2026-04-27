@@ -36,4 +36,14 @@ public class MockBrandRepository implements BrandRepository {
         brands = Stream.concat(brands.stream(), Stream.of(newBrand)).toList();
         return Optional.of(newBrand);
     }
+
+    @Override
+    public Optional<Brand> updateBrand(Brand brand) {
+        return Optional.empty();
+    }
+
+    @Override
+    public int deleteBrand(Long id) {
+        return 0;
+    }
 }

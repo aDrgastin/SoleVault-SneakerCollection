@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
 import type Brand from "./Brand";
-import { mockBrands } from "./mockBrandData";
+import { getAll } from "./brandApi";
 
 export default function useBrands() {
     const [data, setData] = useState<Brand[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
+    const fetchBrands = async () => {
         setLoading(true);
         setError(null);
-        setTimeout(() => {
-            setData(mockBrands);
+        try {
+            const brands = await getAll();
+            setData(brands);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
             setLoading(false);
-        }, 400);
-    }, []);
+        }
+    };
+    useEffect(() => { fetchBrands() }, []);
 
-    return { data, loading, error };
+    return { data, setData, loading, error, refetch: fetchBrands };
 }

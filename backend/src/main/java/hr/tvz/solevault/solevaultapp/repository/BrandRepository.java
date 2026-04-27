@@ -11,4 +11,8 @@ public interface BrandRepository {
     Optional<Brand> findById(Long id);
 
     Optional<Brand> addBrand(Brand brand);
+
+    Optional<Brand> updateBrand(Brand brand);
+
+    int deleteBrand(Long id);
 }

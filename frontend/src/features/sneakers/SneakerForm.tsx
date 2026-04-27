@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type Sneaker from "./Sneaker";
 import { createSneaker, updateSneaker } from "./sneakerApi";
-import { mockBrands } from "../brands/mockBrandData";
+import { getAll } from "../brands/brandApi";
+import type Brand from "../brands/Brand";
 
 export default function SneakerForm({ sneaker, updateView }: { sneaker: Sneaker | null, updateView: () => void }) {
     const isEditing = sneaker !== null;
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [brands, setBrands] = useState<Brand[]>([]);
+
+    useEffect(() => {
+        getAll().then(setBrands).catch(() => setBrands([]));
+    }, []);
 
     function validateForm(data: FormData) {
         const errors: Record<string, string> = {};
@@ -83,7 +89,7 @@ export default function SneakerForm({ sneaker, updateView }: { sneaker: Sneaker 
                 <label htmlFor="brand" className="form-label mb-1">Brand</label>
                 <select name="brand-id" id="brand" className="form-select w-fit-content" defaultValue={sneaker?.brand?.id}>
                     <option value="">Choose</option>
-                    {mockBrands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                    {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                 </select>
                 {formErrors.brandId && (
                     <div className="form-control-feedback mt-2 text-danger">

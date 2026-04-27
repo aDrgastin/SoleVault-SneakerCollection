@@ -1,5 +1,4 @@
-export default interface Brand {
-    id: number;
+export default interface BrandCommand {
     name: string;
     country: string;
     founded: Date;

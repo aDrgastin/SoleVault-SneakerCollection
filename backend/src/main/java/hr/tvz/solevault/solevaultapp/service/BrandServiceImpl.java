@@ -3,10 +3,12 @@ package hr.tvz.solevault.solevaultapp.service;
 import hr.tvz.solevault.solevaultapp.model.Brand;
 import hr.tvz.solevault.solevaultapp.model.BrandCommand;
 import hr.tvz.solevault.solevaultapp.model.BrandDTO;
+import hr.tvz.solevault.solevaultapp.model.Sneaker;
 import hr.tvz.solevault.solevaultapp.repository.BrandRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,10 +28,19 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public Optional<BrandDTO> add(BrandCommand brandCommand) {
-        Brand newBrand = new Brand(brandRepository.findAll().size() + 1L, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl());
-        Optional<Brand> created = brandRepository.addBrand(newBrand);
-        return created.map(this::toDto);
+    public Optional<BrandDTO> addBrand(BrandCommand brandCommand) {
+        Optional<Brand> newBrand = brandRepository.addBrand(new Brand(null, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl()));
+        return newBrand.map(this::toDto);
+    }
+
+    @Override
+    public Optional<BrandDTO> updateBrand(Long id, BrandCommand brandCommand) {
+        return brandRepository.updateBrand(new Brand(id, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl())).map(this::toDto);
+    }
+
+    @Override
+    public boolean deleteBrand(Long id) {
+        return brandRepository.deleteBrand(id) > 0;
     }
 
     private BrandDTO toDto(Brand brand) {

@@ -26,6 +26,11 @@ public class BrandController {
         return ResponseEntity.ok(brandService.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<BrandDTO> getBrandById(@PathVariable Long id) {
+        return brandService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<?> addBrand(@Valid @RequestBody BrandCommand brandCommand, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -35,8 +40,29 @@ public class BrandController {
                     ));
             return ResponseEntity.badRequest().body(errors);
         }
-        return brandService.add(brandCommand)
+        return brandService.addBrand(brandCommand)
                 .map(dto -> ResponseEntity.status(201).body(dto))
                 .orElse(ResponseEntity.status(409).build());
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateBrand(@PathVariable Long id, @Valid @RequestBody BrandCommand brandCommand, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField, FieldError::getDefaultMessage, (existing, duplicate) -> existing + "\n" + duplicate
+                    ));
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return brandService.updateBrand(id, brandCommand)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBrand(@PathVariable Long id) {
+        if (brandService.deleteBrand(id)) {
+            return ResponseEntity.noContent().build();
+        } else return ResponseEntity.notFound().build();
     }
 }

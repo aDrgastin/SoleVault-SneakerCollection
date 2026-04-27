@@ -8,8 +8,9 @@ export default function Layout() {
                     <img className='d-inline-block me-2' src="/sneaker-icon.png" alt="SoleVault logo" />
                     SoleVault
                 </NavLink>
-                <div className="navbar-nav">
+                <div className="navbar-nav flex-row column-gap-3">
                     <NavLink to="/sneakers" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>Sneakers</NavLink>
+                    <NavLink to="/brands" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>Brands</NavLink>
                 </div>
             </div>
         </nav>
