@@ -2,20 +2,34 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type Sneaker from "./Sneaker";
 import { useEffect, useState } from "react";
 import { deleteSneaker, getSneaker } from "./sneakerApi";
+import type PriceHistory from "../priceHistory/PriceHistory";
+import { getPriceHistoryBySneakerId } from "../priceHistory/priceHistoryApi";
+import type SneakerImage from "../sneakerImage/SneakerImage";
+import { getImagesBySneakerId } from "../sneakerImage/sneakerImageApi";
 
 export default function SneakerDetail() {
     const { id } = useParams();
     const [sneaker, setSneaker] = useState<Sneaker | null>(null);
+    const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
+    const [images, setImages] = useState<SneakerImage[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!id) return;
         setLoading(true);
         setError(null);
-        if (id) getSneaker(Number(id)).then(setSneaker).catch(err => {
-            setError(err.message);
-        }).finally(() => setLoading(false));
+        const sneakerId = Number(id);
+        Promise.all([
+            getSneaker(sneakerId),
+            getImagesBySneakerId(sneakerId),
+            getPriceHistoryBySneakerId(sneakerId)
+        ]).then(([sneakerData, imageData, historyData]) => {
+            setSneaker(sneakerData);
+            setImages(imageData);
+            setPriceHistory(historyData);
+        }).catch(err => setError(err instanceof Error ? err.message : 'Unknown error')).finally(() => setLoading(false));
     }, [id]);
 
     async function handleDelete(id: number) {
@@ -42,15 +56,39 @@ export default function SneakerDetail() {
     if (!sneaker) return null;
     return (
         <>
-            <div className="w-100 container-fluid mt-3 ms-0" style={{ maxWidth: '600px' }}>
-                <div className="row gx-1 mb-3">
-                    <div className="col">
+            <div className="w-100 container-fluid mt-3 ms-0">
+                <div className="row gx-4 gy-3 mb-3">
+                    <div className="col-lg-4 col-12">
                         <h5 className="mb-0">{ sneaker.brand?.name ?? '-' }</h5>
                         <h3 className="mb-0">{ sneaker.model }</h3>
                         <small>{sneaker.condition}</small>
                         <p>Size { sneaker.size }</p>
                         <p>{ sneaker.colorway }</p>
                         <h6 className="mt-1">Bought for €{ sneaker.buyPrice }, now €{sneaker.currentValue} → ({sneaker.profitLoss >= 0 ? <span className="text-primary">€+{sneaker.profitLoss}</span> : <span className="text-danger">€{sneaker.profitLoss}</span>})</h6>
+                    </div>
+                    <div className="col">
+                        <h3>Price history</h3>
+                        {priceHistory.length === 0 ? (
+                            <p className="text-muted">No price history yet.</p>
+                        ) : (
+                            <ul className="list-group">
+                                {priceHistory.map(ph => (
+                                    <li className="list-group-item d-flex justify-content-between" key={ph.id}>
+                                        <span className="fw-semibold">€{ph.price}</span>
+                                        <span className="text-muted">{ph.source}</span>
+                                        <small className="text-muted">{ph.recordedAt.toLocaleDateString()}</small>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    <div className="col-12 d-flex justify-content-center align-items-center flex-wrap gap-3">
+                        {images.map(img => (
+                            <figure className="flex-shrink-1" key={img.id}>
+                                <img className="img-fluid" style={{ maxWidth: '300px' }} src={img.url} alt={img.description} />
+                                <figcaption className="mt-2 fw-semibold text-center">{img.description}</figcaption>
+                            </figure>
+                        ))}
                     </div>
                 </div>
                 <div className="row">

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-@Primary
 public class JdbcBrandRepository implements BrandRepository {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert insertBrand;

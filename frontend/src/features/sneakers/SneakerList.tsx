@@ -40,7 +40,7 @@ export default function SneakerList() {
                     <h2 className="mb-0">Sneaker list</h2>
                     <small className="text-muted">{ data.length } sneakers</small>
                 </div>
-                <button className="btn btn-primary px-3 py-2 lh-1 fs-7 fw-semibold" onClick={() => {setShowForm(true); setSelectedSneaker(null);}}>Add</button>
+                {showForm ? <button className="btn btn-danger px-3 py-2 lh-1 fs-7 fw-semibold" onClick={() => {setShowForm(false); setSelectedSneaker(null);}}>Cancel</button> : <button className="btn btn-primary px-3 py-2 lh-1 fs-7 fw-semibold" onClick={() => {setShowForm(true); setSelectedSneaker(null);}}>Add</button>}
             </div>
             <div className="table-responsive">
                 <table className="table table-hover align-middle mb-0">
@@ -60,7 +60,7 @@ export default function SneakerList() {
                                 <td className="fw-semibold">{ s.brand?.name ?? '-' }</td>
                                 <td className="fw-semibold">{ s.model }</td>
                                 <td>{ s.size }</td>
-                                <td>
+                                <td className="text-nowrap">
                                     <Link to={`/sneakers/${Number(s.id)}`} className="btn btn-light px-2 py-1 me-2"><i className="bi bi-eye-fill"></i></Link>
                                     {/*<Link to={`/sneakers/${Number(s.id)}/edit`} className="btn btn-warning px-2 py-1 me-2"><i className="bi bi-pencil-fill"></i></Link>*/}
                                     <button type="button" className="btn btn-warning px-2 py-1 me-2" onClick={() => {setShowForm(true); setSelectedSneaker(s);}}><i className="bi bi-pencil-fill"></i></button>

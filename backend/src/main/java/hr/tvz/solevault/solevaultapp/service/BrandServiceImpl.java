@@ -3,19 +3,17 @@ package hr.tvz.solevault.solevaultapp.service;
 import hr.tvz.solevault.solevaultapp.model.Brand;
 import hr.tvz.solevault.solevaultapp.model.BrandCommand;
 import hr.tvz.solevault.solevaultapp.model.BrandDTO;
-import hr.tvz.solevault.solevaultapp.model.Sneaker;
-import hr.tvz.solevault.solevaultapp.repository.BrandRepository;
+import hr.tvz.solevault.solevaultapp.repository.BrandJpaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class BrandServiceImpl implements BrandService {
-    private final BrandRepository brandRepository;
+    private final BrandJpaRepository brandRepository;
 
     @Override
     public List<BrandDTO> findAll() {
@@ -29,18 +27,27 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public Optional<BrandDTO> addBrand(BrandCommand brandCommand) {
-        Optional<Brand> newBrand = brandRepository.addBrand(new Brand(null, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl()));
-        return newBrand.map(this::toDto);
+        return Optional.of(
+                toDto((brandRepository.save(new Brand(null, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl()))))
+        );
     }
 
     @Override
     public Optional<BrandDTO> updateBrand(Long id, BrandCommand brandCommand) {
-        return brandRepository.updateBrand(new Brand(id, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl())).map(this::toDto);
+        if (brandRepository.existsById(id)) return Optional.empty();
+        return Optional.of(
+                toDto(brandRepository.save(new Brand(id, brandCommand.getName(), brandCommand.getCountry(), brandCommand.getFounded(), brandCommand.getLogoUrl())))
+        );
     }
 
     @Override
     public boolean deleteBrand(Long id) {
-        return brandRepository.deleteBrand(id) > 0;
+        try {
+            brandRepository.deleteById(id);
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     private BrandDTO toDto(Brand brand) {

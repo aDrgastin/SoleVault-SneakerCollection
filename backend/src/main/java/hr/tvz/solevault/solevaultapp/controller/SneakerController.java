@@ -69,12 +69,12 @@ public class SneakerController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /*@DeleteMapping("/{model}")
+    @DeleteMapping("/model/{model}")
     public ResponseEntity<Void> deleteSneakerByModel(@PathVariable String model) {
         if (sneakerService.deleteSneaker(model)) {
             return ResponseEntity.noContent().build();
         } else return ResponseEntity.notFound().build();
-    }*/
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSneaker(@PathVariable Long id) {
